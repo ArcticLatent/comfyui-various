@@ -3,6 +3,7 @@ import os
 
 NODE_CLASS_MAPPINGS = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}
+LOAD_ERRORS = {}
 
 # Main nodes for all users
 NODE_MODULES = [
@@ -38,9 +39,22 @@ if (
 
 
 def load_nodes(module_name: str):
-    global NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+    global NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS, LOAD_ERRORS
 
-    module = importlib.import_module(module_name, package=__name__)
+    try:
+        module = importlib.import_module(module_name, package=__name__)
+    except ModuleNotFoundError as e:
+        missing = getattr(e, "name", None) or str(e)
+        LOAD_ERRORS[module_name] = f"Missing dependency: {missing}"
+        print(
+            f"[WARN] Skipping custom node module {module_name} because dependency "
+            f"`{missing}` is not installed."
+        )
+        return
+    except Exception as e:
+        LOAD_ERRORS[module_name] = f"{type(e).__name__}: {e}"
+        print(f"[WARN] Skipping custom node module {module_name}: {type(e).__name__}: {e}")
+        return
 
     NODE_CLASS_MAPPINGS = {
         **NODE_CLASS_MAPPINGS,

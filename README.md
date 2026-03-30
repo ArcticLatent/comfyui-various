@@ -32,6 +32,18 @@ cd ComfyUI/custom_nodes
 git clone https://github.com/jamesWalker55/comfyui-various
 ```
 
+Some node groups have extra Python dependencies. For example, `comfyui_sound.py`
+requires audio libraries such as `soundfile`, `librosa`, and `torchaudio` in your
+ComfyUI Python environment.
+
+```sh
+# Activate your ComfyUI Python environment first.
+pip install soundfile librosa torchaudio
+```
+
+If those packages are missing, the audio nodes will be skipped and the rest of the
+node pack will still load.
+
 ## Available Nodes
 
 Each `comfyui_*.py` file contains a group of nodes of similar purpose. This repo is still in early stages so I can't write documentation for each file yet - have a look at the code for each file to see what they are for.
